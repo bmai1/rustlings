@@ -9,8 +9,11 @@ struct PositiveNonzeroInteger(u64);
 
 impl PositiveNonzeroInteger {
     fn new(value: i64) -> Result<Self, CreationError> {
-        // TODO: This function shouldn't always return an `Ok`.
-        Ok(Self(value as u64))
+        match u64::try_from(value) {
+            Ok(converted) if converted > 0 => Ok(PositiveNonzeroInteger(converted)),
+            Ok(_) => Err(CreationError::Zero),
+            Err(_) => Err(CreationError::Negative),
+        }
     }
 }
 
